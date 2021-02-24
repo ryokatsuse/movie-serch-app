@@ -8,19 +8,19 @@ type Props = {
 }
 
 const Movie: React.VFC<Props> = ({ movie }) => {
-  const poster = movie.poster === 'N/A' ? defaultImage : movie.poster
+  const poster = movie.Poster === 'N/A' ? defaultImage : movie.Poster
 
   return (
     <div className="movie">
-      <h2>{movie.title}</h2>
+      <h2>{movie.Title}</h2>
       <div>
         <img
           width="200"
-          alt={`The movie titled: ${movie.title}`}
+          alt={`The movie titled: ${movie.Title}`}
           src={poster}
         />
       </div>
-      <p>({movie.year})</p>
+      <p>({movie.Year})</p>
     </div>
   )
 }
