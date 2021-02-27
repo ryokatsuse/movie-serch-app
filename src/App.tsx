@@ -6,27 +6,50 @@ import Search from './views/components/Search'
 
 const API = 'https://www.omdbapi.com/?s=man&apikey=2d324c44'
 
-const initialState = {
-  loding: true,
-  movies: [],
-  errorMessage: null,
+interface InitialState {
+  loading: boolean
+  movies: any
+  jsonResponse: any
+  errorMessage: string | null | undefined
 }
 
-const reducer = (state: any, action: any) => {
+interface AppAction {
+  type: ActionType
+  payload?: InitialState
+  error?: string
+}
+
+enum ActionType {
+  SEARCH_MOVIES_REQUEST = 'SEARCH_MOVIES_REQUEST',
+  SEARCH_MOVIES_SUCCESS = 'SEARCH_MOVIES_SUCCESS',
+  SEARCH_MOVIES_FAILURE = 'SEARCH_MOVIES_FAILURE',
+}
+
+const initialState: InitialState = {
+  loading: true,
+  movies: [],
+  errorMessage: null,
+  jsonResponse: {},
+}
+
+const reducer: React.Reducer<InitialState, AppAction> = (
+  state: InitialState,
+  action: AppAction
+) => {
   switch (action.type) {
-    case 'SEARCH_MOVIES_REQUEST':
+    case ActionType.SEARCH_MOVIES_REQUEST:
       return {
         ...state,
         loading: true,
         errorMessage: null,
       }
-    case 'SEARCH_MOVIES_SUCCESS':
+    case ActionType.SEARCH_MOVIES_SUCCESS:
       return {
         ...state,
         loading: false,
         movies: action.payload,
       }
-    case 'SEARCH_MOVIES_FAILURE':
+    case ActionType.SEARCH_MOVIES_FAILURE:
       return {
         ...state,
         loading: false,
@@ -45,15 +68,15 @@ const App: React.FC = () => {
       .then((response) => response.json())
       .then((jsonResponse) => {
         dispatch({
-          type: 'SEARCH_MOVIES_SUCCESS',
+          type: ActionType.SEARCH_MOVIES_SUCCESS,
           payload: jsonResponse.Search,
         })
       })
   }, [])
 
-  const search = (searchValue: any) => {
+  const search = (searchValue: string) => {
     dispatch({
-      type: 'SEARCH_MOVIES_REQUEST',
+      type: ActionType.SEARCH_MOVIES_REQUEST,
     })
 
     fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=2d324c44`)
@@ -61,12 +84,12 @@ const App: React.FC = () => {
       .then((jsonResponse) => {
         if (jsonResponse.Response === 'True') {
           dispatch({
-            type: 'SEARCH_MOVIES_SUCCESS',
+            type: ActionType.SEARCH_MOVIES_SUCCESS,
             payload: jsonResponse.Search,
           })
         } else {
           dispatch({
-            type: 'SEARCH_MOVIES_FAILURE',
+            type: ActionType.SEARCH_MOVIES_FAILURE,
             payload: jsonResponse.Error,
           })
         }
@@ -77,7 +100,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <GlobalHeader text="HOOKED" />
+      <GlobalHeader text="映画検索" />
       <Search search={search} />
       <p className="App-intro">Sharing a few of our favourite movies</p>
       <div className="movies">
@@ -86,8 +109,8 @@ const App: React.FC = () => {
         ) : errorMessage ? (
           <div className="errorMessage">{errorMessage}</div>
         ) : (
-          movies.map((movie: any, index: any) => (
-            <Movie key={`${index}-${(movie as any).title}`} movie={movie} />
+          movies.map((movie: any, index: string) => (
+            <Movie key={`${index}-${movie.title}`} movie={movie} />
           ))
         )}
       </div>
