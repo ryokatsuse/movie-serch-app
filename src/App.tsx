@@ -3,6 +3,7 @@ import React, { useReducer, useEffect } from 'react'
 import GlobalHeader from './views/components/GlobalHeader'
 import Movie from './views/components/Movie'
 import Search from './views/components/Search'
+import { MovieTypes } from './types/movie'
 
 const API = 'https://www.omdbapi.com/?s=man&apikey=2d324c44'
 
